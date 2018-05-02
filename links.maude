@@ -1,0 +1,48 @@
+op _to_ : Oid Oid -> Oid [ctor] .
+class Link | content : MsgContentList .
+
+var L : MsgList . var mc : MsgContent
+vars O O' : Oid
+
+
+rl [send-mc] :
+< O : ... >
+< O to O' : Link | content : L >
+=>
+< O : ... >
+< O to O' : Link | content : L :: mc > .
+
+rl [read-mc] :
+< O' : ... >
+< O to O' : Link | content : mc :: L >
+=>
+< O' : ... >
+< O to O' : Link | content : L > .
+
+
+class LossyLink .
+subclass LossyLink < Link .
+
+vars MCL MCL' MCL'' : MsgList . var MC : MsgContent .
+vars SOURCE DEST : Oid .
+
+rl [lose-msg] :
+< SOURCE to DEST : LossyLink | content :
+MCL :: MC :: MCL' >
+=>
+< SOURCE to DEST : LossyLink | content :
+MCL :: MCL' > .
+
+
+class DuplLink . subclass DuplLink < Link .
+
+rl [duplMsg] :
+< SOURCE to DEST : DuplLink | content :
+MCL :: MC :: MCL' >
+=>
+< SOURCE to DEST : DuplLink | content :
+MCL :: MC :: MCL' :: MC > .
+
+class UnrelLink .
+subclass UnrelLink < LossyLink DuplLink .
+
