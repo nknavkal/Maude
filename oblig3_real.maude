@@ -1,0 +1,56 @@
+(fmod BIT is sort Bit . --- data type for bits
+ops 0 1 : -> Bit [ctor] .
+op not : Bit -> Bit .
+eq not(0) = 1 .
+eq not(1) = 0 .
+endfm)
+
+(omod MESSAGES is --- same as before, except with bits
+protecting STRING + BIT . including MESSAGE-CONTENT .
+sort Content .
+subsort String < Content .
+op ack : -> Content [ctor] .
+op _withBit_ : Content Bit -> MsgContent [ctor] .
+endom)
+
+(omod ALTERNATING-BIT-PROTOCOL is
+including STRING-LIST + MESSAGES .
+including LOSSY-LINK . --- Links and the rule lose-msg
+
+--- Sender protocol:
+class Sender | msgsToSend : StringList,
+currentMsg : StringList,
+currentBit : Bit,
+receiver : Oid .
+
+vars B B’ : Bit . vars O O’ : Oid . var S : String .
+var SL : StringList . var MCL : MsgContentList .
+
+rl [start] :
+< O : Sender | msgsToSend : S ++ SL, currentMsg : nil >
+=>
+< O : Sender | msgsToSend : SL, currentMsg : S,
+currentBit : 1 > .
+
+rl [sendCurrentMsg] :
+< O : Sender | currentMsg : S, currentBit : B,
+receiver : O’ >
+< O to O’ : Link | content : MCL >
+=>
+< O : Sender | >
+< O to O’ : Link | content : MCL :: (S withBit B) > .
+
+rl [receiveCurrentAckNotLast] :
+< O : Sender | currentBit : B, msgsToSend : S ++ SL >
+< O’ to O : Link | content : (ack withBit B) :: MCL >
+=>
+< O : Sender | currentBit : not(B), currentMsg : S,
+msgsToSend : SL >
+< O’ to O : Link | content : MCL > .
+
+rl [receiveAckLast] :
+< O : Sender | currentBit : B, msgsToSend : nil >
+< O' to O : Link | content : (ack withBit B) :: MCL >
+=>
+< O : Sender | currentBit : not(B), currentMsg : nil, msgsToSend : nil >
+< O' to O : Link | content : MCL > 
