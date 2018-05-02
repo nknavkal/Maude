@@ -1,0 +1,248 @@
+Script started on Fri Feb 23 13:34:09 2018
+[?1034hbash-3.2$ cd maude[K[K[K[K[K[K[K[Kd[Km[K./maude.darwin64
+		     \||||||||||||||||||/
+		   --- Welcome to [31mM[36ma[34mu[35md[32me[0m ---
+		     /||||||||||||||||||\
+	   Maude 2.7.1 built: Jun 27 2016 16:43:23
+	    Copyright 1997-2016 SRI International
+		   Fri Feb 23 13:34:31 2018
+Maude> set include BOOL off .
+Maude> in NAT1.maude .
+==========================================
+fmod NAT1
+Maude> red s(s(s(s(s(0))))) monus s(s(0)) .
+reduce in NAT1 : s(s(s(s(s(0))))) monus s(s(0)) .
+rewrites: 3 in 0ms cpu (0ms real) (333333 rewrites/second)
+result Nat: s(s(s(0)))
+Maude> red s(s(0)) monus s(s(s(0))) .
+reduce in NAT1 : s(s(0)) monus s(s(s(0))) .
+rewrites: 3 in 0ms cpu (0ms real) (3000000 rewrites/second)
+result Nat: s(0)
+Maude> red s(0) monus s(0) .
+reduce in NAT1 : s(0) monus s(0) .
+rewrites: 2 in 0ms cpu (0ms real) (2000000 rewrites/second)
+result Nat: 0
+Maude> red max(s(0), s(0)) .
+[31mWarning: [0m<standard input>, line 6: bad token [35mmax[0m.
+[31mWarning: [0m<standard input>, line 6: no parse for term.
+Maude> red min(s(0), s(0)) .
+reduce in NAT1 : min(s(0), s(0)) .
+rewrites: 2 in 0ms cpu (0ms real) (111111 rewrites/second)
+result Nat: s(0)
+Maude> red min(0, s(s(s(0)))) .
+reduce in NAT1 : min(0, s(s(s(0)))) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Nat: 0
+Maude> red min[K[K[K[K min (s (s (s (s (0)))), s (s (0))) .
+reduce in NAT1 : min(s(s(0)), s(s(s(s(0))))) .
+rewrites: 3 in 0ms cpu (0ms real) (3000000 rewrites/second)
+result Nat: s(s(0))
+Maude> red odd(0) ,[K.
+reduce in NAT1 : odd(0) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Boolean: false
+Maude> red even(0) .
+reduce in NAT1 : even(0) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Boolean: true
+Maude> red od[K[Kodd (s (s (s (s (0))))) .
+reduce in NAT1 : odd(s(s(s(s(0))))) .
+rewrites: 9 in 0ms cpu (0ms real) (9000000 rewrites/second)
+result Boolean: false
+Maude> red evenodd (s (s (s (s (0)))))[C (s (s (s (s (0)))))[K[20D (s (s (s (s (0)))))[K[20D (s (s (s (s (0)))))[K[20D[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C .
+reduce in NAT1 : even(s(s(s(s(0))))) .
+rewrites: 9 in 0ms cpu (0ms real) (9000000 rewrites/second)
+result Boolean: true
+Maude> red odd[K[K[K[K odd (s (s (s (s (s (0))))) - 5. [K[K .
+> 
+
+Maude> red oddodd (s (s (s (s (s (0))))) - 5[K[K[K[K .
+> [J> red oddodd (s (s (s (s (s (0))))) .[J> red odd (s (s (s (s (s (0))))) - 5 .[K[K[K[K[K[K .
+> 
+
+Maude> [JMaude> red odd (s (s (s (s (s (0))))) .
+> 
+
+Maude> red odd odd (s (s (s (s (s (0))))) .
+> [J> red odd odd (s (s (s (s (s (0))))) .[J> [J> red odd odd (s (s (s (s (s (0))))) .[J> 
+
+Maude> [JMaude> red odd odd (s (s (s (s (s (0))))) .) .
+[31mWarning: [0m<standard input>, line 19: didn't expect token [35modd[0m:
+odd odd <---*HERE*
+[31mWarning: [0m<standard input>, line 19: no parse for term.
+Maude> [JMaude> red odd odd (s (s (s (s (s (0)))))) .[JMaude> 
+
+Maude> [JMaude> red odd odd (s (s (s (s (s (0)))))) .[JMaude> red odd odd (s (s (s (s (s (0))))) .[JMaude> red odd (s (s (s (s (s (0))))) .) .
+reduce in NAT1 : odd(s(s(s(s(s(0)))))) .
+rewrites: 11 in 0ms cpu (0ms real) (11000000 rewrites/second)
+result Boolean: true
+Maude> red even[K[K[K[K^V[K[K odd (s (s (s (s (s (0))))))[7D[5D[3C (s (s (s (s (s (0))))))[K[24D (s (s (s (s (s (0))))))[K[24D (s (s (s (s (s (0))))))[K[24De (s (s (s (s (s (0))))))[24Dv (s (s (s (s (s (0))))))[24De (s (s (s (s (s (0))))))[24Dn (s (s (s (s (s (0))))))[24D[3C[3C[3C[3C[3C[3C[6C[C[C[C[C[C[C.[K .
+reduce in NAT1 : even(s(s(s(s(s(0)))))) .
+rewrites: 11 in 0ms cpu (0ms real) (11000000 rewrites/second)
+result Boolean: false
+Maude> empty?(nil) .
+[31mWarning: [0m<standard input>, line 22: skipped unexpected token: [35mempty?[0m
+[31mWarning: [0mno loop state.
+[31mWarning: [0m<standard input>, line 22: syntax error
+Maude> red empty([K?()[Knil) .
+reduce in NAT1 : empty?(nil) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Boolean: true
+Maude> red empty?(nil s)[K(0)) .
+reduce in NAT1 : empty?(nil s(0)) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Boolean: false
+Maude> red empty?(nil s (s (s (0))) s (0) s (s (0)))[K) .
+reduce in NAT1 : empty?(nil s(s(s(0))) s(0) s(s(0))) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Boolean: false
+Maude> rest[K[K[K[Kred rest(nil) .
+reduce in NAT1 : rest(nil) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red rest(nil s (s (s (0))) s (0) s (s (0))) .
+reduce in NAT1 : rest(nil s(s(s(0))) s(0) s(s(0))) .
+rewrites: 3 in 0ms cpu (0ms real) (3000000 rewrites/second)
+result List: nil s(0) s(s(0))
+Maude> red rest(nil s(0)0[K) .
+reduce in NAT1 : rest(nil s(0)) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red[K[K[Kred last(nil) .
+reduce in NAT1 : last(nil) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red last(nil s(0)) .
+reduce in NAT1 : last(nil s(0)) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Nat: s(0)
+Maude> red last(nil s (s (s (0))) s (0) s (s (0))) .
+reduce in NAT1 : last(nil s(s(s(0))) s(0) s(s(0))) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Nat: s(s(0))
+Maude> red reverse(nil) .
+reduce in NAT1 : reverse(nil) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red reverse(nil s) .[K[K[K(0) .[K[K) .
+reduce in NAT1 : reverse(nil s(0)) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil s(0)
+Maude> red reverse ([K[K(nil s (s (s (0))) s (0) s (s (0))) .
+reduce in NAT1 : reverse(nil s(s(s(0))) s(0) s(s(0))) .
+rewrites: 8 in 0ms cpu (0ms real) (8000000 rewrites/second)
+result List: nil s(s(0)) s(0) s(s(s(0)))
+Maude> inorder[K[K[K[K[K[K[Kred inro[K[Korder(emp[K[K[Kbintree (empty, s (s (s (s (s (s (s (s)))))))), empty))) .
+[31mWarning: [0m<standard input>, line 35: mismatched parentheses.
+[31mWarning: [0m<standard input>, line 35: mismatched parentheses.
+[31mWarning: [0m<standard input>, line 35: didn't expect token [35m)[0m:
+inorder ( bintree ( empty , s ( s ( s ( s ( s ( s ( s ( s ) <---*HERE*
+[31mWarning: [0m<standard input>, line 35: no parse for term.
+Maude> [JMaude> red inorder(bintree (empty, s (s (s (s (s (s (s (s)))))))), empty))) .[C)))))))), empty))) .[K[20D0)))))))), empty))) .[20D
+[31mWarning: [0m<standard input>, line 36: mismatched parentheses.
+[31mWarning: [0m<standard input>, line 36: mismatched parentheses.
+[31mWarning: [0m<standard input>, line 36: didn't expect token [35m)[0m:
+inorder ( bintree ( empty , s ( s ( s ( s ( s ( s ( s ( 0 ) ) ) ) ) ) ) ) <---*HERE*
+[31mWarning: [0m<standard input>, line 36: no parse for term.
+Maude> red inorder(bintree(empty, s(s(s(s(0)))), 
+>                     bintree(empty, s(s(s(s(s(s(s(0))))))), empty))) .
+reduce in NAT1 : inorder(bintree(empty, s(s(s(s(0)))), bintree(empty, s(s(s(s(s(s(s(
+    0))))))), empty))) .
+rewrites: 8 in 0ms cpu (0ms real) (8000000 rewrites/second)
+result List: nil s(s(s(s(0)))) s(s(s(s(s(s(s(0)))))))
+Maude> red postorder(bintree(empty, s(s(s(s(0)))), 
+>               bintree(empty, s(s(s(s(s(s(s(0))))))), empty))) .
+reduce in NAT1 : postorder(bintree(empty, s(s(s(s(0)))), bintree(empty, s(s(s(s(s(s(s(
+    0))))))), empty))) .
+rewrites: 8 in 0ms cpu (0ms real) (8000000 rewrites/second)
+result List: nil s(s(s(s(s(s(s(0))))))) s(s(s(s(0))))
+Maude> red weight(bintree(empty, s(s(s(s(0)))), 
+>                    bintree(empty, s(s(s(s(s(s(s(0))))))), empty))) .
+reduce in NAT1 : weight(bintree(empty, s(s(s(s(0)))), bintree(empty, s(s(s(s(s(s(s(
+    0))))))), empty))) .
+rewrites: 16 in 0ms cpu (0ms real) (16000000 rewrites/second)
+result Nat: s(s(s(s(s(s(s(s(s(s(s(0)))))))))))
+Maude> red reverse(bintree(empty, s(s(s(s(0)))), 
+>                     bintree(empty, s(s(s(s(s(s(s(0))))))), empty))) .
+reduce in NAT1 : reverse(bintree(empty, s(s(s(s(0)))), bintree(empty, s(s(s(s(s(s(s(
+    0))))))), empty))) .
+rewrites: 5 in 0ms cpu (0ms real) (5000000 rewrites/second)
+result BinTree: bintree(bintree(empty, s(s(s(s(s(s(s(0))))))), empty), s(s(s(s(0)))),
+    empty)
+Maude> red inorder(empty) .
+reduce in NAT1 : inorder(empty) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red postorder(empty) .
+reduce in NAT1 : postorder(empty) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result List: nil
+Maude> red weight(empty) .
+reduce in NAT1 : weight(empty) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result Nat: 0
+Maude> red reverse(empty) .
+reduce in NAT1 : reverse(empty) .
+rewrites: 1 in 0ms cpu (0ms real) (1000000 rewrites/second)
+result BinTree: empty
+Maude> red inorder(bintree(bintree(empty, s(s(0)), 
+>                             bintree(empty, s(s(s(0))), empty)), 
+>             s(s(s(s(0)))), 
+>             bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), 
+>                     s(s(s(s(s(s(s(0))))))), 
+>                    bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+reduce in NAT1 : inorder(bintree(bintree(empty, s(s(0)), bintree(empty, s(s(s(0))),
+    empty)), s(s(s(s(0)))), bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), s(s(s(
+    s(s(s(s(0))))))), bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+rewrites: 24 in 0ms cpu (0ms real) (12000000 rewrites/second)
+result List: nil s(s(0)) s(s(s(0))) s(s(s(s(0)))) s(s(s(s(s(s(0)))))) s(s(s(s(s(s(s(
+    0))))))) s(s(s(s(s(s(s(s(s(0)))))))))
+Maude> red postorder(bintree(bintree(empty, s(s(0)), 
+>                             bintree(empty, s(s(s(0))), empty)), 
+>             s(s(s(s(0)))), 
+>             bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), 
+>                     s(s(s(s(s(s(s(0))))))), 
+>                    bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+reduce in NAT1 : postorder(bintree(bintree(empty, s(s(0)), bintree(empty, s(s(s(0))),
+    empty)), s(s(s(s(0)))), bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), s(s(s(
+    s(s(s(s(0))))))), bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+rewrites: 24 in 0ms cpu (0ms real) (24000000 rewrites/second)
+result List: nil s(s(s(0))) s(s(0)) s(s(s(s(s(s(0)))))) s(s(s(s(s(s(s(s(s(0)))))))))
+    s(s(s(s(s(s(s(0))))))) s(s(s(s(0))))
+Maude> red weight(bintree(bintree(empty, s(s(0)), 
+>                             bintree(empty, s(s(s(0))), empty)), 
+>             s(s(s(s(0)))), 
+>             bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), 
+>                     s(s(s(s(s(s(s(0))))))), 
+>                    bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+reduce in NAT1 : weight(bintree(bintree(empty, s(s(0)), bintree(empty, s(s(s(0))),
+    empty)), s(s(s(s(0)))), bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), s(s(s(
+    s(s(s(s(0))))))), bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+rewrites: 81 in 0ms cpu (0ms real) (81000000 rewrites/second)
+result Nat: s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(
+    0)))))))))))))))))))))))))))))))
+Maude> red s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(
+>     0))))))))))))))))))))))))))))))) .
+reduce in NAT1 : s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(
+    0))))))))))))))))))))))))))))))) .
+rewrites: 0 in 0ms cpu (0ms real) (0 rewrites/second)
+result Nat: s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(s(
+    0)))))))))))))))))))))))))))))))
+Maude> red reverse(bintree(bintree(empty, s(s(0)), 
+>                             bintree(empty, s(s(s(0))), empty)), 
+>             s(s(s(s(0)))), 
+>             bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), 
+>                     s(s(s(s(s(s(s(0))))))), 
+>                    bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+reduce in NAT1 : reverse(bintree(bintree(empty, s(s(0)), bintree(empty, s(s(s(0))),
+    empty)), s(s(s(s(0)))), bintree(bintree(empty, s(s(s(s(s(s(0)))))), empty), s(s(s(
+    s(s(s(s(0))))))), bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty)))) .
+rewrites: 13 in 0ms cpu (0ms real) (13000000 rewrites/second)
+result BinTree: bintree(bintree(bintree(empty, s(s(s(s(s(s(s(s(s(0))))))))), empty),
+    s(s(s(s(s(s(s(0))))))), bintree(empty, s(s(s(s(s(s(0)))))), empty)), s(s(s(s(
+    0)))), bintree(bintree(empty, s(s(s(0))), empty), s(s(0)), empty))
+Maude> 
+Bye.
+bash-3.2$ exit
+
+Script done on Fri Feb 23 14:50:36 2018

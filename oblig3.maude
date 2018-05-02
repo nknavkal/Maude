@@ -1,0 +1,113 @@
+sort Content .
+subsort String < Content .
+op ack : -> Content [ctor] .
+op _withSeqNo_ : Content Nat -> MsgContent .
+op msg_from_to_ : MsgContent Oid Oid -> Msg .
+
+
+var MC : MsgContent . vars O O' : Oid .
+
+rl [messageLoss] :
+msg MC from O to O' => none .
+
+rl [duplicateMsg] :
+msg MC from O to O' =>
+(msg MC from O to O') (msg MC from O to O') .
+
+
+sort StringList . subsort String < StringList .
+op nil : -> StringList [ctor] .
+op _++_ : StringList StringList -> StringList
+[ctor assoc id: nil] .
+
+
+class Sender | msgsToSend : StringList,
+currentMsg : StringList,
+currentSeqNo : Nat,
+receiver : Oid .
+
+
+vars N N' : Nat . vars O O' : Oid .
+var S : String . var SL : StringList .
+
+rl [start] :
+< O : Sender | msgsToSend : S ++ SL,
+currentSeqNo : 0 >
+=>
+< O : Sender | msgsToSend : SL, currentMsg : S,
+currentSeqNo : 1 > .
+
+rl [sendCurrentMsg] :
+< O : Sender | currentMsg : S,
+currentSeqNo : N,
+receiver : O' >
+=>
+< O : Sender | >
+msg (S withSeqNo N) from O to O' .
+
+rl [receiveCurrentAckNotLast] :
+(msg (ack withSeqNo N) from O' to O)
+< O : Sender | currentSeqNo : N,
+msgsToSend : S ++ SL >
+=>
+< O : Sender | currentSeqNo : N + 1,
+currentMsg : S,
+msgsToSend : SL > .
+
+rl [receiveCurrentLastAck] :
+(msg (ack withSeqNo N) from O' to O)
+< O : Sender | currentSeqNo : N,
+msgsToSend : nil >
+=>
+< O : Sender | currentSeqNo : N + 1,
+currentMsg : nil > .
+
+crl [rcvTooOldAck] :
+(msg (ack withSeqNo N) from O' to O)
+< O : Sender | currentSeqNo : N' >
+=>
+< O : Sender | >
+if N < N' .
+
+
+class Receiver | greatestSeqNoRcvd : Nat,
+sender : Oid,
+msgsRcvd : StringList .
+
+var NZ : NzNat .
+rl [sendAck] :
+< O : Receiver | greatestSeqNoRcvd : NZ,
+sender : O' >
+=>
+< O : Receiver | >
+msg (ack withSeqNo NZ) from O to O' .
+
+rl [rcvNewPacket] :
+(msg (S withSeqNo s N) from O' to O)
+< O : Receiver | greatestSeqNoRcvd : N,
+msgsRcvd : SL >
+=>
+< O : Receiver | greatestSeqNoRcvd : s N,
+msgsRcvd : SL ++ S > .
+
+crl [rcvOldPacket] :
+(msg (S withSeqNo N) from O' to O)
+< O : Receiver | greatestSeqNoRcvd : N' >
+=>
+< O : Receiver | >
+if N =/= s N' .
+
+
+subsort String < Oid .
+op init : -> Configuration .
+eq init =
+< "Sender" : Sender | msgsToSend :
+"INF3232" ++ "is"
+++ "great" ++ "fun",
+currentMsg : nil,
+currentSeqNo : 0,
+receiver : "Receiver" >
+< "Receiver" : Receiver | greatestSeqNoRcvd : 0,
+msgsRcvd : nil,
+sender : "Sender" > .
+

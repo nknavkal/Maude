@@ -1,0 +1,187 @@
+fmod LIST-INT is
+***(
+  sort Boolean .
+ 
+  ops true false : -> Boolean [ctor] .
+  op not_ : Boolean -> Boolean [prec 53] .
+  op _and_ : Boolean Boolean -> Boolean [prec 55] .
+  op _or_ : Boolean Boolean -> Boolean [prec 59] .
+
+  var B : Boolean .
+
+  eq not(false) = true .
+  eq not(true) = false .
+  eq true and B = B .
+  eq false and B = false .
+  eq true or B = true .
+  eq false or B = B .
+)
+  --- end of boolean implementation ---
+
+  protecting NAT1 .
+  
+  sorts List2 NeList .
+  subsorts Int < NeList < List2 .  
+
+  *** Constructors
+  op nil : -> List2 [ctor] .
+  op __ : List2 List2 -> List2 [assoc id: nil ctor] .
+  op __ : NeList NeList -> NeList [assoc id: nil ctor] .
+  op length : List2 -> Nat .
+  ops first last : NeList -> Int .
+  op empty? : List2 -> Boolean .
+  op rest : List2 -> List2 .
+  op reverse : List2 -> List2 .
+  op _occursIn_ : Int List2 -> Boolean .
+  op max : List2 -> Int .
+  op isSorted : List2 -> Boolean .
+---  op max : Nat Nat -> Nat . ---
+  op first : List2 -> Nat .
+  op concat : List2 List2 -> List2 .
+  op isSorted : List2 -> Boolean .
+  op appendFront : Nat List2 -> List2 .
+
+  eq appendFront(n, nil) = nil n .
+  eq appendFront(n, a m) = appendFront(n, a) m .
+
+  vars I J K x : Int .
+  vars L m n a b c : List2 .
+  
+  eq length(nil) = 0 .
+  eq length(I L) = 1 + length(L) .
+  eq first(I L) = I .
+  eq last(L I) = I .
+
+  eq empty?(nil) = true .
+  eq empty?(a n) = false .
+  eq rest(nil n) = nil .
+  eq rest(a n m) = rest(a n) m .
+  eq rest(appendFront(n, a)) = a .
+  eq reverse(nil) = nil .
+  eq reverse(nil m) =  nil m .
+  eq max (0, I) = I .
+  eq max (s(J), s(K)) = s(max(J,K)) .
+  eq reverse(a n m) = appendFront(m, reverse(a n)) .
+  eq first(nil) = 0 .
+
+  eq max(nil) = 0 .
+  eq max(L) = max(first(L), rest(L)) .  
+
+  --- missing definitions, exercises ---
+  eq I occursIn nil = false .
+  eq I occursIn J L = ((I == J) or (I occursIn L)) .
+
+  eq isSorted(nil) = true .
+  eq isSorted(I) = true .
+  eq isSorted(L) = not(first(L) > first(rest(L))) and isSorted(rest(L)) .
+  --- done with 26 ---
+
+  op comesBeforeIn : Int Int List2 -> Boolean .
+  op _>lex_ : List2 List2 -> Boolean .
+  --- more missing stuff ---
+
+  eq I occursIn nil = false .
+  eq comesBeforeIn(I, J, L) = ((I occursIn L) and (J occursIn L)) and ((first(L) == I) or (comesBeforeIn(I, J, rest(L)))) .
+  --- the first 'and' statement checks whether or not the list contains the two Nat values ---
+  --- then, if the first Nat in the list is not I, there is a recursive call with rest(L) ---
+  --- for this statement to be true, there must be some sublist of L that contains both I and J and has I as the first element ---
+  eq m >lex nil = true .
+  eq nil >lex m = false .
+  eq m >lex n = (first(m) > first(n)) or ((first(m) == first(n)) and (rest(m) >lex rest(n))) .
+  --- the first Nat of n must be greater than that of m, or, if they are equal, the first Nat of n' must be greater than that of m', where primeness signifies some consistent number of rest() operations ---
+
+  --- done with 27 --- 
+
+  protecting STRING .
+
+  var A : Char .
+  vars S T P Q : listString .
+  sorts listString pattern .
+  subsorts listString < pattern < List2 .
+
+  op mt : -> Char .
+
+  op isPal : listString -> Boolean .
+  eq isPal(mt) = true .
+  eq isPal(A) = true .
+  eq isPal(S) = (S == reverse(S)) .
+  
+  
+
+  vars p? q? : pattern .
+
+  op _prefixOf_ : pattern listString -> Boolean .
+  eq p? prefixOf T = ((concat(S, P)) == T) .
+  eq mt prefixOf T = true .
+  eq ? prefixOf T = true .
+  eq p? prefixOf T = (first(S) == first(T)) and rest(S) prefixOf rest(T) .
+
+
+  op _substringOf_ : String String -> Boolean . 
+  eq p? substringOf T = (p? prefixOf T) or (p? prefixOf rest(T)) . 
+
+  op ? : -> Char .
+  ---op _prefixOf_ : pattern listString -> Boolean .---
+  ---op _substringOf_ : pattern listString -> Boolean .---
+
+--- MULTISET MODULE ---
+---protecting INT .
+
+  sorts Mset NeMset .                   *** Multisets and non-empty multisets
+  subsorts Int < NeMset < Mset .        *** A number is also a multiset
+  
+  op none : -> Mset [ctor] .            *** Empty multiset
+  op _++_ : Mset Mset -> Mset [ctor assoc comm id: none] .
+  ---op __ : NeMset NeMset -> NeMset [ctor assoc comm id: none] .---
+
+  op size : Mset -> Nat .               *** No of elements in a multiset
+  op mult : Int Mset -> Nat .           *** Multiplicity of an element
+  op delete : Int Mset -> Mset .        *** Remove ONE occurrence of element
+  op _in_ : Int Mset -> Boolean .          *** Is element in multiset?
+  op max : NeMset -> Int .              *** Largest element
+  op empty? : Mset -> Boolean .            *** Empty?
+  op _>mul_ : Mset Mset -> Boolean .       *** Multiset comparison
+
+  vars MS MS' : Mset .  vars NEMS NEMS' : NeMset .
+
+  eq delete(I, I ++ MS) = MS .
+  ceq delete(I, MS) = MS if not I in MS .
+  eq I in MS = mult(I, MS) > 0 .
+  eq empty?(none) = true .
+  eq empty?(I ++ MS) = false .
+
+--- END MULTISET MODULE ---
+  eq empty?(MS) = (MS == none) .
+  eq size(none) = 0 .
+  eq size(I ++ MS) = s(size(MS)) . 
+  eq mult(I, none) = 0 .
+  eq mult(I, I ++ MS) = s(mult(I, MS)) .
+  eq max(none) = 0 .
+  eq max(I ++ MS) = max(max(I), max(MS)) .
+  eq MS >mul none = true .
+  eq none >mul MS = false .
+  eq MS >mul MS' = (max(MS) > max(MS')) or (max(MS) == max(MS') and delete(max(MS), MS) >mul delete(max(MS'), MS')) . 
+---done with 30---
+sorts Msg Obj Mset-ObjMsg .
+subsort Msg < Mset .
+subsort Obj < Mset .
+subsort Mset < Mset-ObjMsg . 
+---done with 32---
+
+op insertionSort : List2 -> List2 .
+op subroutine : List2 Nat List2 -> List2 .
+
+eq insertionSort(nil) = nil .
+eq insertionSort(I) = I .
+eq insertionSort(a nil b) = concat(a, b) .
+eq insertionSort(a x b) = insertionSort(concat(subroutine(a x nil) first(b), rest(b))) .
+---uses subroutine to find where in the sorted list the element x belongs, then moves to the next element ---
+eq subroutine(nil, x, b) = concat(x, b) .
+eq subroutine(a, x, b) = if last(a) < x then concat((a x), b) else subroutine(reverse(rest(reverse(a))), x, concat(last(a), b)) fi . 
+---places x after the first sorted list element(from the right) that is smaller than x ---
+
+***(insertioonSort works by building a sorted list of all analyzed elements on the left and iterating to the end of the list, each time correctly placing the element within the sorted sublist. My implementation uses a subroutine to handle where in the sorted sublist the subject element should go. insertionSort calls the subroutine on the sorted sublist, the subject element x, and an empty list. Every recursive call made by the subroutine checks if the last(largest) element of the sorted list is smaller than the subject element x, and places x at the end of the sorted list. All sorted elements larger than x are then concatenated to the new sublist as the function climbs back up through the recursive calls.)
+---done with 37---
+
+
+endfm
