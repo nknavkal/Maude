@@ -152,7 +152,21 @@ endfm)
   --- Receiver protocol:
   class Receiver | msgsRcvd : StringList,   ---  list of strings so far, or nil
                  currentBit : Bit,          --- bit to current msg 
-                 sender : Oid .           --- sender address        
+                 sender : Oid .           --- sender address 
+  rl [sendAck] :
+     < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
+     < O' to O : LossyLink | content : MCL > 
+     =>
+     < O' : Receiver | >
+     < O' to O : LossyLink | content : MCL :: (ack withBit Bit) >
+
+  rl [rcvNewPacket] :
+    < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
+    < O to O' : LossyLink | content : S :: MCL > 
+    =>
+    < O' : Receiver | msgRcvd : SL ++ S, currentBit : not(Bit) > 
+    < O to O' : LossyLink | content : MCL >
+
 
 
 
