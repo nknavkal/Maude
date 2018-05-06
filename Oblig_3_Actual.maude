@@ -162,11 +162,17 @@ endfm)
 
   rl [rcvNewPacket] :
     < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
-    < O to O' : LossyLink | content : S :: MCL > 
+    < O to O' : LossyLink | content : (S withBit not(Bit)) :: MCL > 
     =>
     < O' : Receiver | msgRcvd : SL ++ S, currentBit : not(Bit) > 
     < O to O' : LossyLink | content : MCL >
 
+  rl [rcvWrongPacket] :
+    < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
+    < O to O' : LossyLink | content : (S withBit Bit) :: MCL > 
+    =>
+    < O' : Receiver | >
+    < O to O' : LossyLink | content : MCL >
 
 
 
