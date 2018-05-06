@@ -1,0 +1,115 @@
+fmod NAT1 is
+	sorts Int Nat NzNat Boolean List BinTree .
+	subsorts Nat NzNat < Int .
+	subsort Int < List .
+	
+	ops true false : -> Boolean [ctor] .
+	op not_ : Boolean -> Boolean [prec 53] .
+	op _and_ : Boolean Boolean -> Boolean [prec 55] .
+	op _or_ : Boolean Boolean -> Boolean [prec 59] .
+
+	var B : Boolean .
+
+	eq (not false) = true .
+	eq not (true) = false .
+	eq true and B = B .
+	eq false and B = false .
+	eq true or B = true .
+	eq false or B = B .
+	--- end of Boolean implementation ---
+
+	op 0 : -> Nat [ctor] .
+	op s : Nat -> Nat [ctor] .
+	op _+_ : Nat Nat -> Nat [ctor] .
+
+	vars M N : Nat .
+
+	eq 0 + M = M .
+	eq s(M) + N = s(M + N) .
+	--- end of Nat implementation ---
+
+	ops _>_ _<_ : Nat Nat -> Boolean .
+	op _monus_ : Nat Nat -> Nat .
+	ops diff min : Nat Nat -> Nat [comm] .
+	ops odd even : Nat -> Boolean .
+	op _-_ : Nat Nat -> Nat .
+
+	vars x y : Nat .
+
+	eq 0 < x = true .
+	eq 0 > x = false .
+	eq s(x) < s(y) = x < y .
+	eq s(x) > s(y) = x > y .
+	eq s(x) - s(y) = diff (s(x) , s(y)) .
+
+	eq x monus 0 = x .
+	eq 0 monus x = x .
+	eq s(x) monus s(y) = x monus y .
+
+	eq diff(0, x) = x .
+	eq diff(s(x), s(y)) = diff(x, y) .
+
+	eq min(0, x) = 0 .
+	eq min(s(x), s(y)) = s(min(x, y)) .
+
+	eq even(0) = true .
+	eq even(s(x)) = not even(x) .
+
+	eq odd(0) = false .
+	eq odd(s(x)) = not odd(x) .
+
+	op nil : -> List [ctor] .
+	op __ : List Nat -> List [ctor] .
+	op empty? : List -> Boolean .
+	op appendFront : Nat List -> List .
+	op rest : List -> List .
+	op last : List -> Nat .
+	op reverse : List -> List .
+	op concat : List List -> List .
+
+	vars a b : List .
+	var n m : Nat .
+
+	eq empty?(nil) = true .
+	eq empty?(a n) = false .
+	eq appendFront(n, nil) = nil n .
+	eq appendFront(n, a m) = appendFront(n, a) m .
+	eq rest(nil) = nil . 
+	eq rest(nil n) = nil .
+	eq rest(a n m) = rest(a n) m .
+	eq rest(appendFront(n, a)) = a .
+	eq last(nil) = nil .
+	eq last(a n) = n .
+	eq reverse(nil) = nil .
+	eq reverse(nil m) =  nil m .
+	eq reverse(a n m) = appendFront(m, reverse(a n)) .
+	eq concat(a, nil) = a .
+  	eq concat(a, b N) = concat(a, b) N .
+
+	op empty : -> BinTree [ctor] .
+  	op bintree : BinTree Nat BinTree -> BinTree [ctor] .
+  	ops preorder inorder postorder : BinTree -> List .
+  	ops size weight : BinTree -> Nat .
+  	op isSearchTree : BinTree -> Boolean .
+  	op reverse : BinTree -> BinTree .
+
+  	vars bt bt' : BinTree .
+  	vars p q : Nat .
+
+  	eq postorder(empty) = nil .
+  	eq postorder(bintree(bt, p, bt')) = concat(postorder(bt), postorder(bt')) p .
+  	eq inorder(empty) = nil .
+  	eq inorder(bintree(bt, p, bt')) = concat(inorder(bt) p, inorder(bt')) .
+  	eq weight(empty) = 0 .
+  	eq weight(bintree(bt, p, bt')) = (weight(bt) + weight(bt')) + p .
+  	eq reverse(empty) = empty .
+  	eq reverse(bintree(bt, p, bt')) = bintree(reverse(bt'), p, reverse(bt)) .
+
+
+endfm
+
+
+
+
+
+

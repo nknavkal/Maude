@@ -4,6 +4,7 @@ op ack : -> Content [ctor] .
 op _withSeqNo_ : Content Nat -> MsgContent .
 op msg_from_to_ : MsgContent Oid Oid -> Msg .
 
+rl 
 
 var MC : MsgContent . vars O O' : Oid .
 
