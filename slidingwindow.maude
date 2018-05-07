@@ -11,11 +11,12 @@ load full-maude26
   subsort MsgContent < MsgContentList .
   op nil : -> MsgContentList [ctor] .
   op _::_ : MsgContentList MsgContentList -> MsgContentList [ctor assoc id: nil] .
+  op _withSeqNo_ : Content Nat -> MsgContent .
 endom)
 
 (omod LINK is
   protecting MSG-CONTENT-LIST .
-  
+  protecting NAT1 .
   class Link | content : MsgContentList .
 
   op _to_ : Oid Oid -> Oid [ctor] .
@@ -95,43 +96,46 @@ endfm)
 
 
 --- Here comes the actual protocol:
-(omod ALTERNATING-BIT is 
+(omod SLIDING-WINDOW is 
   including STRING-LIST .
   including MESSAGES .
   including LOSSY-LINK.
 
   --- Sender protocol:
   class Sender | msgsToSend : StringList,   --- messages not sent yet
-                 currentMsg : StringList,   --- current string, or nil
-                 currentBit : Bit,          --- bit to current msg 
+                 sendingWindow : StringList,   --- list of possible msgs that can be sent
+                 windowSize : Nat           --- width of the window
+                 windowLeft : NAT1          --- index of the left side of the window
+                 windowRight : Nat          --- index of the right side of the sliding window 
                  receiver : Oid .           --- receiver address        
 
 
-  vars B B' : Bit .
+  vars A B N N' K : Nat .
   vars O O' : Oid .
-  var S : String .
-  var SL : StringList .
+  var S S' T T' : String .
+  var SL SL' : StringList .
   var MCL : MsgContentList .
 
   rl [start] :
-     < O : Sender | msgsToSend : S ++ SL, currentMsg : nil, currentBit : 0 >
+     < O : Sender | msgsToSend : S ++ SL, sendingWindow : nil, windowSize : K, windowLeft : 0 >
     =>
-     < O : Sender | msgsToSend : SL, currentMsg : S, currentBit : 1 > .
+     < O : Sender | msgsToSend : SL, sendingWindow : S, windowRight : K > 
 
-  rl [sendCurrentMsg] :      
-     < O : Sender | currentMsg : S, currentBit : B, receiver : O' >  
+  crl [sendCurrentMsg] :      
+     < O : Sender | currentMsg : S, windowLeft : A, windowRight : B, receiver : O' >  
      < O to O' : LossyLink | content : MCL >
     =>
      < O : Sender | >
      < O to O' : LossyLink | content : MCL :: (S withBit B) > .
+     if 
 
-  rl [receiveCurrentAckNotLast] :
-     < O : Sender | currentBit : B, msgsToSend : S ++ SL >
-     < O' to O : LossyLink | content : (ack withBit B) :: MCL >
+  crl [receiveValidAck] : 
+     < O : Sender | msgsToSend : S ++ SL, sendingWindow: S' ++ SL', windowLeft : A, windowRight : B, >
+     < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
     =>
-     < O : Sender | currentBit : not(B), currentMsg : S,
-                    msgsToSend : SL > 
-     < O' to O : LossyLink | content : MCL > .
+     < O : Sender | msgsToSend : SL, sendingWindow: SL' ++ S, windowLeft : s(A), windowRight : s(B), >
+     < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
+     if N >= A
 
   rl [receiveAckLast] :
      < O : Sender | currentBit : B, msgsToSend : S >
