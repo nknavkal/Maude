@@ -137,19 +137,34 @@ endfm)
      < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
      if N >= A
 
-  rl [receiveAckLast] :
+  rl [receiveLastValidAck] :
      < O : Sender | currentBit : B, msgsToSend : S >
      < O' to O : LossyLink | content : (ack withBit B) :: MCL >
      =>
      < O : Sender | currentBit : not(B), currentMsg : nil > 
      < O' to O : LossyLink | content : MCL > .
 
-  rl [receiveWrongAck] : 
+
+     < O : Sender | msgsToSend : S, sendingWindow: SL', windowLeft : A, windowRight : B, >
+     < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
+    =>
+     < O : Sender | msgsToSend : SL, sendingWindow: SL' ++ S, windowLeft : s(A), windowRight : s(B), >
+     < O' to O : LossyLink | content : MCL >
+     if N >= A
+
+  rl [receiveInvalidAck] : 
      < O : Sender | currentBit : B, msgsToSend : S ++ SL >
      < O' to O : LossyLink | content : (ack withBit not(B)) :: MCL >
     =>
      < O : Sender | >
      < O' to O : LossyLink | content : MCL > . 
+
+     < O : Sender | msgsToSend : S ++ SL, sendingWindow: S' ++ SL', windowLeft : A, windowRight : B, >
+     < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
+    =>
+     < O : Sender | >
+     < O' to O : LossyLink | content : MCL >
+     if N < A
 
 
 
