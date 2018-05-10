@@ -119,32 +119,25 @@ endfm)
   rl [start] :
      < O : Sender | msgsToSend : S ++ SL, sendingWindow : nil, windowSize : K, windowLeft : 0 >
     =>
-     < O : Sender | msgsToSend : SL, sendingWindow : S, windowRight : K > 
+     < O : Sender | msgsToSend : SL, sendingWindow : (S withSeqNo 1), windowLeft : 1, windowRight : K > 
 
   crl [sendCurrentMsg] :      
-     < O : Sender | currentMsg : S, windowLeft : A, windowRight : B, receiver : O' >  
+     < O : Sender | currentMsg : (S withSeqNo N), windowLeft : A, windowRight : B, receiver : O' >  
      < O to O' : LossyLink | content : MCL >
     =>
      < O : Sender | >
-     < O to O' : LossyLink | content : MCL :: (S withBit B) > .
-     if 
-
+     < O to O' : LossyLink | content : MCL :: (S withSeqNo N) > .
+     if (N >= A) and (N <= B)
+ 
   crl [receiveValidAck] : 
-     < O : Sender | msgsToSend : S ++ SL, sendingWindow: S' ++ SL', windowLeft : A, windowRight : B, >
+     < O : Sender | msgsToSend : S ++ SL, sendingWindow: S' ++ SL', windowSize : K, windowLeft : A, windowRight : B, >
      < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
     =>
-     < O : Sender | msgsToSend : SL, sendingWindow: SL' ++ S, windowLeft : s(A), windowRight : s(B), >
+     < O : Sender | msgsToSend : SL, sendingWindow: SL' ++ S, windowLeft : N, windowRight : N + K, >
      < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
      if N >= A
 
-  rl [receiveLastValidAck] :
-     < O : Sender | currentBit : B, msgsToSend : S >
-     < O' to O : LossyLink | content : (ack withBit B) :: MCL >
-     =>
-     < O : Sender | currentBit : not(B), currentMsg : nil > 
-     < O' to O : LossyLink | content : MCL > .
-
-
+  crl [receiveLastValidAck] :
      < O : Sender | msgsToSend : S, sendingWindow: SL', windowLeft : A, windowRight : B, >
      < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
     =>
@@ -152,13 +145,7 @@ endfm)
      < O' to O : LossyLink | content : MCL >
      if N >= A
 
-  rl [receiveInvalidAck] : 
-     < O : Sender | currentBit : B, msgsToSend : S ++ SL >
-     < O' to O : LossyLink | content : (ack withBit not(B)) :: MCL >
-    =>
-     < O : Sender | >
-     < O' to O : LossyLink | content : MCL > . 
-
+  crl [receiveInvalidAck] :  
      < O : Sender | msgsToSend : S ++ SL, sendingWindow: S' ++ SL', windowLeft : A, windowRight : B, >
      < O' to O : LossyLink | content : (ack withSeqNo N) :: MCL >
     =>
@@ -166,32 +153,33 @@ endfm)
      < O' to O : LossyLink | content : MCL >
      if N < A
 
-
-
   --- Receiver protocol:
-  class Receiver | msgsRcvd : StringList,   ---  list of strings so far, or nil
-                 currentBit : Bit,          --- bit to current msg 
+  class Receiver | msgsRcvd : StringList,   ---  list of contiguous strings so far, or nil
+                 receivingWindow : StringList, --- list of strings in window, to be placed into msgRcvd
+                 windowLeft : Nat,          --- index of next string needed
+                 currentAck : Nat,      --- highest seqNo for which receiver has seen all messages prior to and including it
                  sender : Oid .           --- sender address 
   rl [sendAck] :
-     < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
+     < O' : Receiver | currentAck : N > 
      < O' to O : LossyLink | content : MCL > 
      =>
      < O' : Receiver | >
-     < O' to O : LossyLink | content : MCL :: (ack withBit Bit) >
+     < O' to O : LossyLink | content : MCL :: (ack with withSeqNo N) >
 
-  rl [rcvNewPacket] :
-    < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
-    < O to O' : LossyLink | content : (S withBit not(Bit)) :: MCL > 
+  rl [rcvPacketUpdateWindow] :
+    < O' : Receiver | msgRcvd : SL, receivingWindow : SL, currentAck : N > 
+    < O to O' : LossyLink | content : (S withSeqNo s(N)) :: MCL > 
     =>
-    < O' : Receiver | msgRcvd : SL ++ S, currentBit : not(Bit) > 
+    < O' : Receiver | msgRcvd : something, receivingWindow : something, currentAck : something> 
     < O to O' : LossyLink | content : MCL >
 
   rl [rcvWrongPacket] :
-    < O' : Receiver | msgRcvd : SL, currentBit : Bit > 
-    < O to O' : LossyLink | content : (S withBit Bit) :: MCL > 
+    < O' : Receiver | msgRcvd : SL, receivingWindow : something, currentAck : N > 
+    < O to O' : LossyLink | content : (ack withSeqNo N') :: MCL > 
     =>
     < O' : Receiver | >
     < O to O' : LossyLink | content : MCL >
+    if N' < s(N)
 
 
 
